@@ -1,14 +1,12 @@
-package ur.azizairo.simplemvvm.views.base
+package ur.azizairo.foundation.views
 
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
-import ur.azizairo.simplemvvm.ARG_SCREEN
+import ur.azizairo.foundation.ARG_SCREEN
 import ur.azizairo.simplemvvm.App
-import ur.azizairo.simplemvvm.MainViewModel
 import java.lang.reflect.Constructor
 
 /**
@@ -19,18 +17,14 @@ inline fun <reified VM: ViewModel> BaseFragment.screenViewModel() = viewModels<V
     val application = requireActivity().application as App
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
 
-    // using Providers API directly for getting MainViewModel instance
-    val provider = ViewModelProvider(
-        requireActivity(),
-        ViewModelProvider.AndroidViewModelFactory(application)
-    )
-    val mainViewModel = provider[MainViewModel::class.java]
+    // Getting ActivityScopeViewModel instance
+    val activityScopeViewModel = (requireActivity() as FragmentsHolder).getActivityScopeViewModel()
 
     // forming the list of available dependencies:
     // - singleton scope dependencies (repositories) -> from App class
     // - activity VM scope dependencies -> from MainViewModel
     // - screen VM scope dependencies -> screen args
-    val dependencies = listOf(screen, mainViewModel) + application.models
+    val dependencies = listOf(screen, activityScopeViewModel) + application.models
 
     // creating factory
     ViewModelFactory(dependencies, this)

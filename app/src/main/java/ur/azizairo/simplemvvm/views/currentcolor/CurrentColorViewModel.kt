@@ -6,9 +6,9 @@ import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorListener
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
 import ur.azizairo.simplemvvm.model.colors.NamedColor
-import ur.azizairo.simplemvvm.views.Navigator
-import ur.azizairo.simplemvvm.views.UiActions
-import ur.azizairo.simplemvvm.views.base.BaseViewModel
+import ur.azizairo.foundation.navigator.Navigator
+import ur.azizairo.foundation.uiactions.UiActions
+import ur.azizairo.foundation.views.BaseViewModel
 import ur.azizairo.simplemvvm.views.changecolor.ChangeColorFragment
 
 class CurrentColorViewModel(

@@ -4,13 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import kotlinx.coroutines.flow.merge
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
 import ur.azizairo.simplemvvm.model.colors.NamedColor
-import ur.azizairo.simplemvvm.views.Navigator
-import ur.azizairo.simplemvvm.views.UiActions
-import ur.azizairo.simplemvvm.views.base.BaseViewModel
+import ur.azizairo.foundation.navigator.Navigator
+import ur.azizairo.foundation.uiactions.UiActions
+import ur.azizairo.foundation.views.BaseViewModel
 import ur.azizairo.simplemvvm.views.changecolor.ChangeColorFragment.Screen
 
 class ChangeColorViewModel(

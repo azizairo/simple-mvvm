@@ -1,4 +1,4 @@
-package ur.azizairo.simplemvvm.utils
+package ur.azizairo.foundation.utils
 
 /**
  * Represents "side effect".

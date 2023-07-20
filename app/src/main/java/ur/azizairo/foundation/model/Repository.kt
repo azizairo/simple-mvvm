@@ -1,4 +1,4 @@
-package ur.azizairo.simplemvvm.model
+package ur.azizairo.foundation.model
 
 /**
  * Base interface for all repositories

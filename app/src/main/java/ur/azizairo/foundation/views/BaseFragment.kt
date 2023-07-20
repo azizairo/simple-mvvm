@@ -1,4 +1,4 @@
-package ur.azizairo.simplemvvm.views.base
+package ur.azizairo.foundation.views
 
 import androidx.fragment.app.Fragment
 import ur.azizairo.simplemvvm.MainActivity
@@ -20,7 +20,7 @@ abstract class BaseFragment: Fragment() {
 
         // if you have more than 1 activity -> you should use a separate interface instead of direct
         // cast to MainActivity
-        ((requireActivity()) as MainActivity).notifyScreenUpdates()
+        ((requireActivity()) as FragmentsHolder).notifyScreenUpdates()
     }
 
 }

@@ -8,10 +8,10 @@ import android.view.ViewTreeObserver
 import androidx.recyclerview.widget.GridLayoutManager
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.databinding.FragmentChangeColorBinding
-import ur.azizairo.simplemvvm.views.HasScreenTitle
-import ur.azizairo.simplemvvm.views.base.BaseFragment
-import ur.azizairo.simplemvvm.views.base.BaseScreen
-import ur.azizairo.simplemvvm.views.base.screenViewModel
+import ur.azizairo.foundation.views.HasScreenTitle
+import ur.azizairo.foundation.views.BaseFragment
+import ur.azizairo.foundation.views.BaseScreen
+import ur.azizairo.foundation.views.screenViewModel
 
 /**
  * Screen for changing color.

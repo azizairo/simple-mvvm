@@ -1,4 +1,4 @@
-package ur.azizairo.simplemvvm.views
+package ur.azizairo.foundation.uiactions
 
 /**
  * Common actions than can be preformed in the view-model

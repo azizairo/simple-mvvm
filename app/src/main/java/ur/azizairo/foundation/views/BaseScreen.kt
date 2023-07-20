@@ -1,4 +1,4 @@
-package ur.azizairo.simplemvvm.views.base
+package ur.azizairo.foundation.views
 
 import java.io.Serializable
 

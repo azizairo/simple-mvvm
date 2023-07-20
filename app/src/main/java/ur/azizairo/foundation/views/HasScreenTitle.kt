@@ -1,4 +1,4 @@
-package ur.azizairo.simplemvvm.views
+package ur.azizairo.foundation.views
 
 /**
  * If your fragment wants to show custom screen title in the toolbar, implement this

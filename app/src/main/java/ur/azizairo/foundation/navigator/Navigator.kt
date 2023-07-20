@@ -1,6 +1,6 @@
-package ur.azizairo.simplemvvm.views
+package ur.azizairo.foundation.navigator
 
-import ur.azizairo.simplemvvm.views.base.BaseScreen
+import ur.azizairo.foundation.views.BaseScreen
 
 /**
  * Navigation for your application

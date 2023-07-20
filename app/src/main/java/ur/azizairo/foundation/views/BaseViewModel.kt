@@ -1,9 +1,9 @@
-package ur.azizairo.simplemvvm.views.base
+package ur.azizairo.foundation.views
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ur.azizairo.simplemvvm.utils.Event
+import ur.azizairo.foundation.utils.Event
 
 typealias LiveEvent<T> = LiveData<Event<T>>
 typealias MutableLiveEvent<T> = MutableLiveData<Event<T>>
