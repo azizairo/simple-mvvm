@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.AnimRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
@@ -40,6 +41,13 @@ class MainActivity : AppCompatActivity(), FragmentsHolder {
         navigator = StackFragmentNavigator(
             activity = this,
             containerId = R.id.fragment_container,
+            defaultTitle = getString(R.string.app_name),
+            animations = StackFragmentNavigator.Animations(
+                enterAnim = R.anim.enter,
+                exitAnim = R.anim.exit,
+                popEnterAnim = R.anim.pop_enter,
+                popExitAnim = R.anim.pop_exit
+            ),
             initialScreenCreator = { CurrentColorFragment.Screen() }
         )
         navigator.onCreate(savedInstanceState)

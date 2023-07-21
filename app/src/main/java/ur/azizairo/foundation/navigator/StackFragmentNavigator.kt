@@ -2,6 +2,7 @@ package ur.azizairo.foundation.navigator
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -12,12 +13,12 @@ import ur.azizairo.foundation.utils.Event
 import ur.azizairo.foundation.views.BaseFragment
 import ur.azizairo.foundation.views.BaseScreen
 import ur.azizairo.foundation.views.HasScreenTitle
-import ur.azizairo.simplemvvm.R
-import ur.azizairo.simplemvvm.views.currentcolor.CurrentColorFragment
 
 class StackFragmentNavigator(
     private val activity: AppCompatActivity,
     @IdRes private val containerId: Int,
+    private val defaultTitle: String,
+    private val animations: Animations,
     private val initialScreenCreator: () -> BaseScreen
 ): Navigator {
 
@@ -53,7 +54,7 @@ class StackFragmentNavigator(
         activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentCallbacks)
     }
 
-     fun launchFragment(screen: BaseScreen, addToBackStack: Boolean = true) {
+     private fun launchFragment(screen: BaseScreen, addToBackStack: Boolean = true) {
 
          // as screen classes are inside fragments -> we can create fragment directly from screen
          val fragment = screen.javaClass.enclosingClass.newInstance() as Fragment
@@ -63,10 +64,10 @@ class StackFragmentNavigator(
          if (addToBackStack) transaction.addToBackStack(null)
          transaction
              .setCustomAnimations(
-                 R.anim.enter,
-                 R.anim.exit,
-                 R.anim.pop_enter,
-                 R.anim.pop_exit
+                 animations.enterAnim,
+                 animations.exitAnim,
+                 animations.popEnterAnim,
+                 animations.popExitAnim
              )
              .replace(containerId, fragment)
              .commit()
@@ -74,7 +75,7 @@ class StackFragmentNavigator(
 
     fun notifyScreenUpdates() {
 
-        val f = activity.supportFragmentManager.findFragmentById(R.id.fragment_container)
+        val f = activity.supportFragmentManager.findFragmentById(containerId)
 
         if (activity.supportFragmentManager.backStackEntryCount > 0) {
             //more than 1 screen -> show back button in the toolbar
@@ -87,7 +88,7 @@ class StackFragmentNavigator(
             //fragment has custom screen title -> display it
             activity.supportActionBar?.title = f.getScreenTitle()
         } else {
-            activity.supportActionBar?.title = activity.getString(R.string.app_name)
+            activity.supportActionBar?.title = defaultTitle
         }
 
     }
@@ -113,5 +114,12 @@ class StackFragmentNavigator(
             fragment.viewModel.onResult(result)
         }
     }
+
+    class Animations(
+        @AnimRes val enterAnim: Int,
+        @AnimRes val exitAnim: Int,
+        @AnimRes val popEnterAnim: Int,
+        @AnimRes val popExitAnim: Int
+    )
 
 }

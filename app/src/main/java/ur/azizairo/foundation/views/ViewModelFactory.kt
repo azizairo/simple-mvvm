@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import ur.azizairo.foundation.ARG_SCREEN
-import ur.azizairo.simplemvvm.App
+import ur.azizairo.foundation.BaseApplication
 import java.lang.reflect.Constructor
 
 /**
@@ -14,7 +14,7 @@ import java.lang.reflect.Constructor
  */
 inline fun <reified VM: ViewModel> BaseFragment.screenViewModel() = viewModels<VM> {
 
-    val application = requireActivity().application as App
+    val application = requireActivity().application as BaseApplication
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
 
     // Getting ActivityScopeViewModel instance
@@ -24,7 +24,7 @@ inline fun <reified VM: ViewModel> BaseFragment.screenViewModel() = viewModels<V
     // - singleton scope dependencies (repositories) -> from App class
     // - activity VM scope dependencies -> from MainViewModel
     // - screen VM scope dependencies -> screen args
-    val dependencies = listOf(screen, activityScopeViewModel) + application.models
+    val dependencies = listOf(screen, activityScopeViewModel) + application.repositories
 
     // creating factory
     ViewModelFactory(dependencies, this)
