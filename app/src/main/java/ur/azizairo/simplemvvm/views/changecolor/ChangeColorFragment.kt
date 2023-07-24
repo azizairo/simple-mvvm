@@ -12,6 +12,7 @@ import ur.azizairo.foundation.views.HasScreenTitle
 import ur.azizairo.foundation.views.BaseFragment
 import ur.azizairo.foundation.views.BaseScreen
 import ur.azizairo.foundation.views.screenViewModel
+import ur.azizairo.simplemvvm.views.renderSimpleResult
 
 /**
  * Screen for changing color.
@@ -52,8 +53,10 @@ class ChangeColorFragment: BaseFragment(), HasScreenTitle {
         binding.saveButton.setOnClickListener { viewModel.onSavePressed() }
         binding.cancelButton.setOnClickListener { viewModel.onCancelPressed() }
 
-        viewModel.colorList.observe(viewLifecycleOwner) {
-            adapter.items = it
+        viewModel.colorList.observe(viewLifecycleOwner) { result ->
+            renderSimpleResult(binding.root, result) {
+                adapter.items = it
+            }
         }
 
         viewModel.screenTitle.observe(viewLifecycleOwner) {
@@ -67,11 +70,11 @@ class ChangeColorFragment: BaseFragment(), HasScreenTitle {
     private fun setupLayoutManager(binding: FragmentChangeColorBinding, adapter: ColorsAdapter) {
 
         //waiting for list width
-        binding.colorsRecyclerView.viewTreeObserver.addOnGlobalLayoutListener ( object : ViewTreeObserver.OnGlobalLayoutListener {
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener ( object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
 
-                binding.colorsRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val width = binding.colorsRecyclerView.width
+                binding.root.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val width = binding.root.width
                 val itemWidth = resources.getDimensionPixelSize(R.dimen.item_width)
                 val columns = width / itemWidth
                 binding.colorsRecyclerView.adapter = adapter
