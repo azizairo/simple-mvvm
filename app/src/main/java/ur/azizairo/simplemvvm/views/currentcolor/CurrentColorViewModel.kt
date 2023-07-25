@@ -60,6 +60,7 @@ class CurrentColorViewModel(
     // ---
 
     fun changeColor() {
+
         val currentColor = currentColor.value.takeSuccess() ?: return
         val screen = ChangeColorFragment.Screen(currentColor.id)
         navigator.launch(screen)
