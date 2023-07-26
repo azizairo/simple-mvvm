@@ -2,7 +2,7 @@ package ur.azizairo.simplemvvm
 
 import android.app.Application
 import ur.azizairo.foundation.BaseApplication
-import ur.azizairo.foundation.model.Repository
+import ur.azizairo.foundation.model.tasks.SimpleTasksFactory
 import ur.azizairo.simplemvvm.model.colors.InMemoryColorsRepository
 
 /**
@@ -10,11 +10,14 @@ import ur.azizairo.simplemvvm.model.colors.InMemoryColorsRepository
  */
 class App: Application(), BaseApplication {
 
+    private val tasksFactory = SimpleTasksFactory()
+
     /**
      * Place your repositories here, now we have only 1 repository
      */
-    override val repositories = listOf<Repository> (
-        InMemoryColorsRepository()
+    override val repositories = listOf(
+        tasksFactory,
+        InMemoryColorsRepository(tasksFactory)
     )
 
 }

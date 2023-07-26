@@ -2,14 +2,18 @@ package ur.azizairo.foundation.model.tasks
 
 import android.os.Handler
 import android.os.Looper
+import ur.azizairo.foundation.model.ErrorResult
+import ur.azizairo.foundation.model.FinalResult
+import ur.azizairo.foundation.model.SuccessResult
 
 private val handler = Handler(Looper.getMainLooper())
 
-// TODO!!
+// TODO!!!
 class SimpleTasksFactory: TasksFactory {
 
     override fun <T> async(body: TaskBody<T>): Task<T> {
-        TODO("Not yet implemented")
+
+        return SimpleTask(body)
     }
 
     // TODO!!!
@@ -18,6 +22,7 @@ class SimpleTasksFactory: TasksFactory {
     ): Task<T> {
 
         var thread: Thread? = null
+        var canceled = false
 
         override fun await(): T = body()
 
@@ -26,14 +31,26 @@ class SimpleTasksFactory: TasksFactory {
             thread = Thread {
                 try {
                     val data = body()
+                    publishResult(listener, SuccessResult(data))
                 } catch (e: Exception) {
-
+                    publishResult(listener, ErrorResult(e))
                 }
-            }
+            }. apply { start() }
         }
 
         override fun cancel() {
-            TODO("Not yet implemented")
+
+            canceled = true
+            thread?.interrupt()
+            thread = null
+        }
+
+        private fun publishResult(listener: TaskListener<T>, result: FinalResult<T>) {
+
+            handler.post {
+                if (canceled) return@post
+                listener(result)
+            }
         }
 
     }
