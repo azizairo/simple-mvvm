@@ -3,6 +3,7 @@ package ur.azizairo.simplemvvm.views.currentcolor
 import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.foundation.model.takeSuccess
+import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorListener
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
@@ -17,8 +18,9 @@ import ur.azizairo.simplemvvm.views.changecolor.ChangeColorFragment
 class CurrentColorViewModel(
     private val navigator: Navigator,
     private val uiActions: UiActions,
-    private val colorsRepository: ColorsRepository
-): BaseViewModel() {
+    private val colorsRepository: ColorsRepository,
+    dispatcher: Dispatcher
+): BaseViewModel(dispatcher) {
 
     private val _currentColor = MutableLiveResult<NamedColor>(PendingResult())
     val currentColor: LiveResult<NamedColor> = _currentColor

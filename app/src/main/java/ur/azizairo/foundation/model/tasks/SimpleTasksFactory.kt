@@ -5,6 +5,7 @@ import android.os.Looper
 import ur.azizairo.foundation.model.ErrorResult
 import ur.azizairo.foundation.model.FinalResult
 import ur.azizairo.foundation.model.SuccessResult
+import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
 
 private val handler = Handler(Looper.getMainLooper())
 
@@ -26,7 +27,7 @@ class SimpleTasksFactory: TasksFactory {
 
         override fun await(): T = body()
 
-        override fun enqueue(listener: TaskListener<T>) {
+        override fun enqueue(dispatcher: Dispatcher, listener: TaskListener<T>) {
 
             thread = Thread {
                 try {
@@ -35,7 +36,7 @@ class SimpleTasksFactory: TasksFactory {
                 } catch (e: Exception) {
                     publishResult(listener, ErrorResult(e))
                 }
-            }. apply { start() }
+            }.apply { start() }
         }
 
         override fun cancel() {
@@ -48,10 +49,11 @@ class SimpleTasksFactory: TasksFactory {
         private fun publishResult(listener: TaskListener<T>, result: FinalResult<T>) {
 
             handler.post {
-                if (canceled) return@post
+                if (canceled) {
+                    return@post
+                }
                 listener(result)
             }
         }
-
     }
 }

@@ -8,6 +8,7 @@ import ur.azizairo.foundation.model.FinalResult
 import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.foundation.model.tasks.TasksFactory
+import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
 import ur.azizairo.simplemvvm.model.colors.NamedColor
@@ -25,8 +26,9 @@ class ChangeColorViewModel(
     private val uiActions: UiActions,
     private val colorsRepository: ColorsRepository,
     private val tasksFactory: TasksFactory,
-    savedStateHandle: SavedStateHandle
-): BaseViewModel(), ColorsAdapter.Listener {
+    savedStateHandle: SavedStateHandle,
+    dispatcher: Dispatcher
+): BaseViewModel(dispatcher), ColorsAdapter.Listener {
 
     // input sources
     private val _availableColors = MutableLiveResult<List<NamedColor>>(PendingResult())
