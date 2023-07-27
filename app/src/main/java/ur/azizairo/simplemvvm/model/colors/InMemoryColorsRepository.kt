@@ -2,8 +2,8 @@ package ur.azizairo.simplemvvm.model.colors
 
 import android.graphics.Color
 import ur.azizairo.foundation.model.tasks.Task
-import ur.azizairo.foundation.model.tasks.TasksFactory
 import ur.azizairo.foundation.model.tasks.ThreadUtils
+import ur.azizairo.foundation.model.tasks.factories.TasksFactory
 
 /**
  * Simple in-memory implementation of [ColorsRepository]

@@ -1,4 +1,6 @@
-package ur.azizairo.foundation.model.tasks
+package ur.azizairo.foundation.model.tasks.factories
+
+import ur.azizairo.foundation.model.tasks.Task
 
 typealias TaskBody<T> = () -> T
 

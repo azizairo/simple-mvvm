@@ -2,9 +2,9 @@ package ur.azizairo.simplemvvm
 
 import android.app.Application
 import ur.azizairo.foundation.BaseApplication
-import ur.azizairo.foundation.model.tasks.SimpleTasksFactory
 import ur.azizairo.foundation.model.tasks.ThreadUtils
 import ur.azizairo.foundation.model.tasks.dispatchers.MainThreadDispatcher
+import ur.azizairo.foundation.model.tasks.factories.ThreadTasksFactory
 import ur.azizairo.simplemvvm.model.colors.InMemoryColorsRepository
 
 /**
@@ -12,7 +12,7 @@ import ur.azizairo.simplemvvm.model.colors.InMemoryColorsRepository
  */
 class App: Application(), BaseApplication {
 
-    private val tasksFactory = SimpleTasksFactory()
+    private val tasksFactory = ThreadTasksFactory()
     private val threadUtils = ThreadUtils.DefaultThreadUtils()
     private val dispatcher = MainThreadDispatcher()
 

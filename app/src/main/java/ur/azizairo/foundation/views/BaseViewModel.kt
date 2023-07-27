@@ -35,11 +35,13 @@ open class BaseViewModel(
 
     }
 
-    override fun onCleared() {
+    fun onBackPressed() {
+        clearTasks()
+    }
 
+    override fun onCleared() {
         super.onCleared()
-        tasks.forEach {it.cancel()}
-        tasks.clear()
+        clearTasks()
     }
 
     fun <T> Task<T>.safeEnqueue(listener: TaskListener<T>? = null) {
@@ -57,5 +59,10 @@ open class BaseViewModel(
         this.safeEnqueue {
             liveResult.value = it
         }
+    }
+
+    private fun clearTasks() {
+        tasks.forEach {it.cancel()}
+        tasks.clear()
     }
 }

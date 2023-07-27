@@ -1,14 +1,12 @@
 package ur.azizairo.simplemvvm.views.changecolor
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import ur.azizairo.foundation.model.ErrorResult
 import ur.azizairo.foundation.model.FinalResult
 import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.SuccessResult
-import ur.azizairo.foundation.model.tasks.TasksFactory
 import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
+import ur.azizairo.foundation.model.tasks.factories.TasksFactory
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
 import ur.azizairo.simplemvvm.model.colors.NamedColor

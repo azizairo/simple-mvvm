@@ -54,6 +54,14 @@ class StackFragmentNavigator(
         activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentCallbacks)
     }
 
+    fun onBackPressed() {
+
+        val f = getCurrentFragment()
+        if (f is BaseFragment) {
+            f.viewModel.onBackPressed()
+        }
+    }
+
      private fun launchFragment(screen: BaseScreen, addToBackStack: Boolean = true) {
 
          // as screen classes are inside fragments -> we can create fragment directly from screen
@@ -75,7 +83,7 @@ class StackFragmentNavigator(
 
     fun notifyScreenUpdates() {
 
-        val f = activity.supportFragmentManager.findFragmentById(containerId)
+        val f = getCurrentFragment()
 
         if (activity.supportFragmentManager.backStackEntryCount > 0) {
             //more than 1 screen -> show back button in the toolbar
@@ -91,6 +99,10 @@ class StackFragmentNavigator(
             activity.supportActionBar?.title = defaultTitle
         }
 
+    }
+
+    private fun getCurrentFragment(): Fragment? {
+        return activity.supportFragmentManager.findFragmentById(containerId)
     }
 
     private val fragmentCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {

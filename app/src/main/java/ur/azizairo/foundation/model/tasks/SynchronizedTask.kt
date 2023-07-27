@@ -3,6 +3,13 @@ package ur.azizairo.foundation.model.tasks
 import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * Wrapper class for other task.
+ * Contains common synchronization logic. Ensures that method of the wrapped task
+ * are executed in correct order. Doesn't allow cases: e.g. launching task more than 1 time,
+ * triggered listeners more than 1 time, launching task after cancelling, cancelling already
+ * finished task and so on.
+ */
 class SynchronizedTask<T>(
     private val task: Task<T>
 ): Task<T> {
