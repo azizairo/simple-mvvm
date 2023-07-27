@@ -1,4 +1,4 @@
-package ur.azizairo.foundation.model.tasks
+package ur.azizairo.foundation.model.tasks.utils
 
 /**
  * Common methods for working with threads.

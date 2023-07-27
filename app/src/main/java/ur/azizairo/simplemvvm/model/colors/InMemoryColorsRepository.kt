@@ -2,13 +2,12 @@ package ur.azizairo.simplemvvm.model.colors
 
 import android.graphics.Color
 import ur.azizairo.foundation.model.tasks.Task
-import ur.azizairo.foundation.model.tasks.ThreadUtils
+import ur.azizairo.foundation.model.tasks.utils.ThreadUtils
 import ur.azizairo.foundation.model.tasks.factories.TasksFactory
 
 /**
  * Simple in-memory implementation of [ColorsRepository]
  */
-// TODO!!!
 class InMemoryColorsRepository(
     private val tasksFactory: TasksFactory,
     private val threadUtils: ThreadUtils

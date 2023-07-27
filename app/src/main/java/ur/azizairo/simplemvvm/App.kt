@@ -2,7 +2,7 @@ package ur.azizairo.simplemvvm
 
 import android.app.Application
 import ur.azizairo.foundation.BaseApplication
-import ur.azizairo.foundation.model.tasks.ThreadUtils
+import ur.azizairo.foundation.model.tasks.utils.ThreadUtils
 import ur.azizairo.foundation.model.tasks.dispatchers.MainThreadDispatcher
 import ur.azizairo.foundation.model.tasks.factories.ThreadTasksFactory
 import ur.azizairo.simplemvvm.model.colors.InMemoryColorsRepository
