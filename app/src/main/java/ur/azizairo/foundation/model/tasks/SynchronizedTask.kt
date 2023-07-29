@@ -1,6 +1,7 @@
 package ur.azizairo.foundation.model.tasks
 
 import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
+import ur.azizairo.foundation.model.tasks.exceptions.CancelledException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -50,7 +51,7 @@ class SynchronizedTask<T>(
         val finalListener: TaskListener<T> = { result ->
             if (listenerCalled.compareAndSet(false, true)) {
                 if (!canceled) {
-                    listener(result)
+                    listener.invoke(result)
                 }
             }
         }

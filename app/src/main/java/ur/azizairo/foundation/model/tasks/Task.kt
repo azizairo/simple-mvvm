@@ -5,8 +5,6 @@ import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
 
 typealias TaskListener<T> = (FinalResult<T>) -> Unit
 
-class CancelledException(originalException: Exception? = null): Exception(originalException)
-
 /**
  * Base interface for all async operations.
  */

@@ -4,6 +4,7 @@ import ur.azizairo.foundation.model.ErrorResult
 import ur.azizairo.foundation.model.FinalResult
 import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
+import ur.azizairo.foundation.model.tasks.exceptions.CancelledException
 import ur.azizairo.foundation.model.tasks.factories.TaskBody
 import ur.azizairo.foundation.utils.delegates.Await
 
@@ -41,7 +42,7 @@ abstract class AbstractTask<T>: Task<T> {
         val wrapperListener: TaskListener<T> = {
             finalResult = it
             dispatcher.dispatch {
-                listener(finalResult)
+                listener.invoke(finalResult)
             }
         }
         doEnqueue(wrapperListener)
