@@ -10,8 +10,9 @@ import ur.azizairo.foundation.model.tasks.factories.TasksFactory
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
 import ur.azizairo.simplemvvm.model.colors.NamedColor
-import ur.azizairo.foundation.navigator.Navigator
-import ur.azizairo.foundation.uiactions.UiActions
+import ur.azizairo.foundation.sideeffects.navigator.Navigator
+import ur.azizairo.foundation.sideeffects.resources.Resources
+import ur.azizairo.foundation.sideeffects.toasts.Toasts
 import ur.azizairo.foundation.views.BaseViewModel
 import ur.azizairo.foundation.views.LiveResult
 import ur.azizairo.foundation.views.MediatorLiveResult
@@ -19,13 +20,14 @@ import ur.azizairo.foundation.views.MutableLiveResult
 import ur.azizairo.simplemvvm.views.changecolor.ChangeColorFragment.Screen
 
 class ChangeColorViewModel(
-    screen: Screen,
-    private val navigator: Navigator,
-    private val uiActions: UiActions,
-    private val colorsRepository: ColorsRepository,
-    private val tasksFactory: TasksFactory,
-    savedStateHandle: SavedStateHandle,
-    dispatcher: Dispatcher
+        screen: Screen,
+        private val navigator: Navigator,
+        private val toasts: Toasts,
+        private val resources: Resources,
+        private val colorsRepository: ColorsRepository,
+        private val tasksFactory: TasksFactory,
+        savedStateHandle: SavedStateHandle,
+        dispatcher: Dispatcher
 ): BaseViewModel(dispatcher), ColorsAdapter.Listener {
 
     // input sources
@@ -43,9 +45,9 @@ class ChangeColorViewModel(
     val screenTitle: LiveData<String> = Transformations.map(viewState) { result ->
         if (result is SuccessResult) {
             val currentColor = result.data.colorsList.first { it.selected }
-            uiActions.getString(R.string.change_color_screen_title, currentColor.namedColor.name)
+            resources.getString(R.string.change_color_screen_title, currentColor.namedColor.name)
         } else {
-            uiActions.getString(R.string.change_color_screen_title_simple)
+            resources.getString(R.string.change_color_screen_title_simple)
         }
     }
 
@@ -122,7 +124,7 @@ class ChangeColorViewModel(
         _saveInProgress.value = false
         when(result) {
             is SuccessResult -> navigator.goBack(result.data)
-            is ErrorResult -> uiActions.toast(uiActions.getString(R.string.error_happened))
+            is ErrorResult -> toasts.toast(resources.getString(R.string.error_happened))
         }
     }
 

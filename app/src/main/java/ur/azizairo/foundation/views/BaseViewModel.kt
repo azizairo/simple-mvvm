@@ -35,8 +35,10 @@ open class BaseViewModel(
 
     }
 
-    fun onBackPressed() {
+    fun onBackPressed(): Boolean {
+
         clearTasks()
+        return false
     }
 
     override fun onCleared() {

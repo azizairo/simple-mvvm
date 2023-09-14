@@ -1,3 +1,4 @@
+/*
 package ur.azizairo.foundation.views
 
 import android.view.View
@@ -51,3 +52,4 @@ class ViewBindingDelegate<B: ViewBinding>(
         }
     }
 }
+*/

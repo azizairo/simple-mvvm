@@ -1,96 +1,49 @@
 package ur.azizairo.simplemvvm
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import androidx.activity.viewModels
-import androidx.annotation.AnimRes
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import ur.azizairo.foundation.ActivityScopeViewModel
-import ur.azizairo.foundation.navigator.IntermediateNavigator
-import ur.azizairo.foundation.navigator.StackFragmentNavigator
-import ur.azizairo.foundation.uiactions.AndroidUiActions
-import ur.azizairo.foundation.utils.viewModelCreator
-import ur.azizairo.foundation.views.HasScreenTitle
-import ur.azizairo.foundation.views.BaseFragment
-import ur.azizairo.foundation.views.FragmentsHolder
+import ur.azizairo.foundation.sideeffects.SideEffectPluginsManager
+import ur.azizairo.foundation.sideeffects.dialogs.plugin.DialogsPlugin
+import ur.azizairo.foundation.sideeffects.intents.plugin.IntentsPlugin
+import ur.azizairo.foundation.sideeffects.navigator.plugin.NavigatorPlugin
+import ur.azizairo.foundation.sideeffects.navigator.plugin.StackFragmentNavigator
+import ur.azizairo.foundation.sideeffects.permissions.plugin.PermissionsPlugin
+import ur.azizairo.foundation.sideeffects.resources.plugin.ResourcesPlugin
+import ur.azizairo.foundation.sideeffects.toasts.plugin.ToastsPlugin
+import ur.azizairo.foundation.views.activity.BaseActivity
 import ur.azizairo.simplemvvm.views.currentcolor.CurrentColorFragment
 
 /**
  * This application is a single-activity app. MainActivity is a container
  * for all screens.
  */
-class MainActivity : AppCompatActivity(), FragmentsHolder {
+class MainActivity : BaseActivity() {
 
-    private lateinit var navigator: StackFragmentNavigator
+    override fun registerPlugins(manager: SideEffectPluginsManager) = with(manager) {
 
-    private val activityViewModel by viewModelCreator<ActivityScopeViewModel> {
-        ActivityScopeViewModel(
-            uiActions = AndroidUiActions(applicationContext),
-            navigator = IntermediateNavigator()
-        )
+        val navigator = createNavigator()
+        register(ToastsPlugin())
+        register(ResourcesPlugin())
+        register(NavigatorPlugin(navigator))
+        register(PermissionsPlugin())
+        register(DialogsPlugin())
+        register(IntentsPlugin())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        navigator = StackFragmentNavigator(
-            activity = this,
+        setContentView(R.layout.activity_main)
+    }
+
+    private fun createNavigator() = StackFragmentNavigator(
             containerId = R.id.fragment_container,
             defaultTitle = getString(R.string.app_name),
             animations = StackFragmentNavigator.Animations(
-                enterAnim = R.anim.enter,
-                exitAnim = R.anim.exit,
-                popEnterAnim = R.anim.pop_enter,
-                popExitAnim = R.anim.pop_exit
+                    enterAnim = R.anim.enter,
+                    exitAnim = R.anim.exit,
+                    popEnterAnim = R.anim.pop_enter,
+                    popExitAnim = R.anim.pop_exit
             ),
             initialScreenCreator = { CurrentColorFragment.Screen() }
-        )
-        navigator.onCreate(savedInstanceState)
-    }
-
-    override fun onDestroy() {
-
-        navigator.onDestroy()
-        super.onDestroy()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-
-        onBackPressed()
-        return true
-    }
-
-    override fun onResume() {
-
-        super.onResume()
-        // execute navigation actions only when activity is active
-        activityViewModel.navigator.setTarget(navigator)
-    }
-
-    override fun onPause() {
-
-        super.onPause()
-        // postpone navigation actions if activity is not active
-        activityViewModel.navigator.setTarget(null)
-    }
-
-    override fun notifyScreenUpdates() {
-
-        navigator.notifyScreenUpdates()
-    }
-
-    override fun getActivityScopeViewModel(): ActivityScopeViewModel {
-
-        return activityViewModel
-    }
-
-    override fun onBackPressed() {
-        navigator.onBackPressed()
-        super.onBackPressed()
-    }
+    )
 }

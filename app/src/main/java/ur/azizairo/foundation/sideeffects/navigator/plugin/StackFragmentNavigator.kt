@@ -1,26 +1,29 @@
-package ur.azizairo.foundation.navigator
+package ur.azizairo.foundation.sideeffects.navigator.plugin
 
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import ur.azizairo.foundation.ARG_SCREEN
+import ur.azizairo.foundation.sideeffects.navigator.Navigator
+import ur.azizairo.foundation.sideeffects.SideEffectImplementation
 import ur.azizairo.foundation.utils.Event
 import ur.azizairo.foundation.views.BaseFragment
 import ur.azizairo.foundation.views.BaseScreen
 import ur.azizairo.foundation.views.HasScreenTitle
 
 class StackFragmentNavigator(
-    private val activity: AppCompatActivity,
-    @IdRes private val containerId: Int,
-    private val defaultTitle: String,
-    private val animations: Animations,
-    private val initialScreenCreator: () -> BaseScreen
-): Navigator {
+        @IdRes private val containerId: Int,
+        private val defaultTitle: String,
+        private val animations: Animations,
+        private val initialScreenCreator: () -> BaseScreen
+): SideEffectImplementation(), Navigator, LifecycleObserver {
 
     private var result: Event<Any>? = null
 
@@ -34,11 +37,12 @@ class StackFragmentNavigator(
         if (result != null) {
             this.result = Event(result)
         }
-        activity.onBackPressed()
+        requireActivity().onBackPressed()
     }
 
-    fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
 
+        requireActivity().lifecycle.addObserver(this)
         if (savedInstanceState == null) {
             //define the initial screen that should be launched when app starts.
             launchFragment(
@@ -46,19 +50,51 @@ class StackFragmentNavigator(
                 addToBackStack = false
             )
         }
-        activity.supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentCallbacks, false)
+        requireActivity().supportFragmentManager.registerFragmentLifecycleCallbacks(
+                fragmentCallbacks, false
+        )
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
 
-        activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentCallbacks)
+        requireActivity().supportFragmentManager.unregisterFragmentLifecycleCallbacks(
+                fragmentCallbacks
+        )
     }
 
-    fun onBackPressed() {
+    override fun onBackPressed(): Boolean {
 
         val f = getCurrentFragment()
-        if (f is BaseFragment) {
+        return if (f is BaseFragment) {
             f.viewModel.onBackPressed()
+        } else {
+            false
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+
+        requireActivity().onBackPressed()
+        return true
+    }
+
+    override fun onRequestUpdates() {
+
+        val f = getCurrentFragment()
+
+        if (requireActivity().supportFragmentManager.backStackEntryCount > 0) {
+            //more than 1 screen -> show back button in the toolbar
+            requireActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            requireActivity().supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
+
+        if(f is HasScreenTitle && f.getScreenTitle() != null) {
+            //fragment has custom screen title -> display it
+            requireActivity().supportActionBar?.title = f.getScreenTitle()
+        } else {
+            requireActivity().supportActionBar?.title = defaultTitle
         }
     }
 
@@ -68,7 +104,7 @@ class StackFragmentNavigator(
          val fragment = screen.javaClass.enclosingClass.newInstance() as Fragment
          fragment.arguments = bundleOf(ARG_SCREEN to screen)
 
-         val transaction = activity.supportFragmentManager.beginTransaction()
+         val transaction = requireActivity().supportFragmentManager.beginTransaction()
          if (addToBackStack) transaction.addToBackStack(null)
          transaction
              .setCustomAnimations(
@@ -81,31 +117,13 @@ class StackFragmentNavigator(
              .commit()
      }
 
-    fun notifyScreenUpdates() {
-
-        val f = getCurrentFragment()
-
-        if (activity.supportFragmentManager.backStackEntryCount > 0) {
-            //more than 1 screen -> show back button in the toolbar
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        } else {
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        }
-
-        if(f is HasScreenTitle && f.getScreenTitle() != null) {
-            //fragment has custom screen title -> display it
-            activity.supportActionBar?.title = f.getScreenTitle()
-        } else {
-            activity.supportActionBar?.title = defaultTitle
-        }
-
-    }
-
     private fun getCurrentFragment(): Fragment? {
-        return activity.supportFragmentManager.findFragmentById(containerId)
+
+        return requireActivity().supportFragmentManager.findFragmentById(containerId)
     }
 
     private val fragmentCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+
         override fun onFragmentViewCreated(
             fm: FragmentManager,
             f: Fragment,
@@ -113,7 +131,7 @@ class StackFragmentNavigator(
             savedInstanceState: Bundle?
         ) {
 
-            notifyScreenUpdates()
+            onRequestUpdates()
             publishResult(f)
         }
     }

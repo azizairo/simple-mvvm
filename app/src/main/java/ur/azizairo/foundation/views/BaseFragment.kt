@@ -8,6 +8,7 @@ import ur.azizairo.foundation.model.ErrorResult
 import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.Result
 import ur.azizairo.foundation.model.SuccessResult
+import ur.azizairo.foundation.views.activity.ActivityDelegateHolder
 
 /**
  * Base class for all fragments
@@ -26,7 +27,7 @@ abstract class BaseFragment: Fragment() {
 
         // if you have more than 1 activity -> you should use a separate interface instead of direct
         // cast to MainActivity
-        ((requireActivity()) as FragmentsHolder).notifyScreenUpdates()
+        ((requireActivity()) as ActivityDelegateHolder).delegate.notifyScreenUpdates()
     }
 
     fun<T> renderResult(

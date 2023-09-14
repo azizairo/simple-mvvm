@@ -1,4 +1,4 @@
-package ur.azizairo.foundation.navigator
+package ur.azizairo.foundation.sideeffects.navigator
 
 import ur.azizairo.foundation.views.BaseScreen
 
