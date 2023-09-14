@@ -19,7 +19,7 @@ interface SideEffectPlugin<Mediator, Implementation> {
 
     /**
      * Create an implementation for the mediator created by [createMediator] method.
-     * May return null. NULL-value may be useful if logic can be implemented directly in
+     * May  null. NULL-value may be useful if logic can be implemented directly in
      * mediator (e.g. side-effect doesn't need activity instance)
      */
     fun createImplementation(mediator: Mediator): Implementation? = null

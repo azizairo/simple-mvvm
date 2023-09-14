@@ -2,7 +2,7 @@ package ur.azizairo.foundation.sideeffects.toasts.plugin
 
 import android.content.Context
 import android.widget.Toast
-import ur.azizairo.foundation.model.tasks.dispatchers.MainThreadDispatcher
+import ur.azizairo.foundation.model.dispatchers.MainThreadDispatcher
 import ur.azizairo.foundation.sideeffects.SideEffectMediator
 import ur.azizairo.foundation.sideeffects.toasts.Toasts
 

@@ -1,14 +1,10 @@
 package ur.azizairo.foundation.views
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ur.azizairo.foundation.model.ErrorResult
-import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.Result
 import ur.azizairo.foundation.model.SuccessResult
-import ur.azizairo.foundation.model.tasks.Task
-import ur.azizairo.foundation.model.tasks.TaskListener
-import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
 import ur.azizairo.foundation.utils.Event
 
 typealias LiveEvent<T> = LiveData<Event<T>>
@@ -23,7 +19,8 @@ typealias MediatorLiveResult<T> = MediatorLiveData<Result<T>>
  */
 open class BaseViewModel: ViewModel() {
 
-    private val tasks = mutableSetOf<Task<*>>()
+    private val coroutineContext = SupervisorJob() + Dispatchers.Main.immediate
+    protected val viewModelScope: CoroutineScope = CoroutineScope(coroutineContext)
 
     /**
      * Override this method in child classes if you want to listen for results
@@ -35,13 +32,13 @@ open class BaseViewModel: ViewModel() {
 
     fun onBackPressed(): Boolean {
 
-        clearTasks()
+        clearViewModelScope()
         return false
     }
 
     override fun onCleared() {
         super.onCleared()
-        clearTasks()
+        clearViewModelScope()
     }
 
     /**
@@ -60,8 +57,8 @@ open class BaseViewModel: ViewModel() {
         }
     }
 
-    private fun clearTasks() {
-        tasks.forEach {it.cancel()}
-        tasks.clear()
+    private fun clearViewModelScope() {
+
+        viewModelScope.cancel()
     }
 }

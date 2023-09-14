@@ -1,9 +1,9 @@
 package ur.azizairo.foundation.sideeffects.dialogs.plugin
 
+import kotlinx.coroutines.suspendCancellableCoroutine
+import ur.azizairo.foundation.model.Emitter
 import ur.azizairo.foundation.model.ErrorResult
-import ur.azizairo.foundation.model.tasks.Task
-import ur.azizairo.foundation.model.tasks.callback.CallbackTask
-import ur.azizairo.foundation.model.tasks.callback.Emitter
+import ur.azizairo.foundation.model.toEmitter
 import ur.azizairo.foundation.sideeffects.SideEffectMediator
 import ur.azizairo.foundation.sideeffects.dialogs.Dialogs
 
@@ -11,12 +11,15 @@ class DialogsSideEffectMediator: SideEffectMediator<DialogsSideEffectImpl>(), Di
 
     var retainedState = RetainedState()
 
-    override suspend fun show(dialogConfig: DialogConfig): Boolean = CallbackTask.create<Boolean> { emitter ->
+    override suspend fun show(
+        dialogConfig: DialogConfig
+    ): Boolean = suspendCancellableCoroutine { continuation ->
 
+        val emitter = continuation.toEmitter()
         if (retainedState.record != null) {
             // for now allowing only 1 active dialog at a time
             emitter.emit(ErrorResult(IllegalStateException("Can't launch more than 1 dialog at a time")))
-            return@create
+            return@suspendCancellableCoroutine
         }
 
         val wrappedEmitter = Emitter.wrap(emitter) {
@@ -35,11 +38,11 @@ class DialogsSideEffectMediator: SideEffectMediator<DialogsSideEffectImpl>(), Di
         }
 
         retainedState.record = record
-    }.suspend()
+    }
 
     class DialogRecord(
-            val emitter: Emitter<Boolean>,
-            val config: DialogConfig
+        val emitter: Emitter<Boolean>,
+        val config: DialogConfig
     )
 
     class RetainedState(

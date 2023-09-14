@@ -1,7 +1,6 @@
 package ur.azizairo.simplemvvm.model.colors
 
 import ur.azizairo.foundation.model.Repository
-import ur.azizairo.foundation.model.tasks.Task
 
 typealias ColorListener = (NamedColor) -> Unit
 

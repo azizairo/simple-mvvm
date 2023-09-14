@@ -1,4 +1,4 @@
-package ur.azizairo.foundation.model.tasks.dispatchers
+package ur.azizairo.foundation.model.dispatchers
 
 interface Dispatcher {
 

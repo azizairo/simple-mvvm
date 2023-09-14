@@ -1,6 +1,5 @@
 package ur.azizairo.foundation.sideeffects.dialogs
 
-import ur.azizairo.foundation.model.tasks.Task
 import ur.azizairo.foundation.sideeffects.dialogs.plugin.DialogConfig
 import ur.azizairo.foundation.sideeffects.dialogs.plugin.DialogsPlugin
 

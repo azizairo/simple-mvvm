@@ -1,7 +1,7 @@
 package ur.azizairo.foundation.sideeffects
 
-import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
-import ur.azizairo.foundation.model.tasks.dispatchers.MainThreadDispatcher
+import ur.azizairo.foundation.model.dispatchers.Dispatcher
+import ur.azizairo.foundation.model.dispatchers.MainThreadDispatcher
 import ur.azizairo.foundation.utils.ResourceActions
 import ur.azizairo.foundation.ActivityScopeViewModel
 

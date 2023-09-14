@@ -77,7 +77,7 @@ class ChangeColorViewModel(
 
             navigator.goBack(currentColor)
         } catch (exception: Exception) {
-            if(exception is CancellationException) {
+            if(exception !is CancellationException) {
                 toasts.toast(resources.getString(R.string.error_happened))
             }
         } finally {

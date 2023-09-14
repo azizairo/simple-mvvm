@@ -1,6 +1,5 @@
 package ur.azizairo.foundation.sideeffects.permissions
 
-import ur.azizairo.foundation.model.tasks.Task
 import ur.azizairo.foundation.sideeffects.permissions.plugin.PermissionStatus
 import ur.azizairo.foundation.sideeffects.permissions.plugin.PermissionsPlugin
 

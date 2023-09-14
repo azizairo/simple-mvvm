@@ -1,48 +1,47 @@
 package ur.azizairo.simplemvvm.model.colors
 
 import android.graphics.Color
-import ur.azizairo.foundation.model.tasks.Task
-import ur.azizairo.foundation.model.tasks.utils.ThreadUtils
-import ur.azizairo.foundation.model.tasks.factories.TasksFactory
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import ur.azizairo.foundation.model.coroutines.IoDispatcher
 
 /**
  * Simple in-memory implementation of [ColorsRepository]
  */
 class InMemoryColorsRepository(
-    private val tasksFactory: TasksFactory,
-    private val threadUtils: ThreadUtils
+    private val ioDispatcher: IoDispatcher
 ): ColorsRepository {
 
     private var currentColor: NamedColor = AVAILABLE_COLORS[0]
 
-    override suspend fun getAvailableColors(): List<NamedColor> = tasksFactory.async {
+    override suspend fun getAvailableColors(): List<NamedColor> = withContext(ioDispatcher.value) {
 
-        threadUtils.sleep(1000)
-        return@async AVAILABLE_COLORS
-    }.suspend()
+        delay(1000)
+        return@withContext AVAILABLE_COLORS
+    }
 
-    override suspend fun getById(id: Long): NamedColor = tasksFactory.async {
+    override suspend fun getById(id: Long): NamedColor = withContext(ioDispatcher.value) {
 
-        threadUtils.sleep(1000)
-        return@async AVAILABLE_COLORS.first { it.id == id }
-    }.suspend()
+        delay(1000)
+        return@withContext AVAILABLE_COLORS.first { it.id == id }
+    }
 
-    override suspend fun getCurrentColor(): NamedColor = tasksFactory.async {
+    override suspend fun getCurrentColor(): NamedColor = withContext(ioDispatcher.value) {
 
-        threadUtils.sleep(1000)
-        return@async currentColor
-    }.suspend()
+        delay(1000)
+        return@withContext currentColor
+    }
 
-    override suspend fun setCurrentColor(color: NamedColor): Unit = tasksFactory.async {
+    override suspend fun setCurrentColor(color: NamedColor) = withContext(ioDispatcher.value) {
 
-        threadUtils.sleep(1000)
+        delay(1000)
         if (currentColor != color) {
             currentColor = color
             listeners.forEach {
                 it(color)
             }
         }
-    }.suspend()
+    }
 
     override fun addListener(listener: ColorListener) {
 

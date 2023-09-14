@@ -1,6 +1,6 @@
 package ur.azizairo.foundation.utils
 
-import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
+import ur.azizairo.foundation.model.dispatchers.Dispatcher
 
 typealias ResourceAction<T> = (T) -> Unit
 

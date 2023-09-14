@@ -1,10 +1,6 @@
-package ur.azizairo.foundation.model.tasks.callback
-
-import ur.azizairo.foundation.model.FinalResult
+package ur.azizairo.foundation.model
 
 typealias CancelListener = () -> Unit
-
-typealias ExecutionListener<T> = (Emitter<T>) -> Unit
 
 /**
  * Emitter instance is passed to [CallbackTask.create] as an argument so you can use it for
