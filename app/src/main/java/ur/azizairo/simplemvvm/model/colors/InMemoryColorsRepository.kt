@@ -15,17 +15,34 @@ class InMemoryColorsRepository(
 
     private var currentColor: NamedColor = AVAILABLE_COLORS[0]
 
-    override fun getAvailableColors(): Task<List<NamedColor>> = tasksFactory.async {
+    override suspend fun getAvailableColors(): List<NamedColor> = tasksFactory.async {
 
         threadUtils.sleep(1000)
         return@async AVAILABLE_COLORS
-    }
+    }.suspend()
 
-    override fun getById(id: Long): Task<NamedColor> = tasksFactory.async {
+    override suspend fun getById(id: Long): NamedColor = tasksFactory.async {
 
         threadUtils.sleep(1000)
         return@async AVAILABLE_COLORS.first { it.id == id }
-    }
+    }.suspend()
+
+    override suspend fun getCurrentColor(): NamedColor = tasksFactory.async {
+
+        threadUtils.sleep(1000)
+        return@async currentColor
+    }.suspend()
+
+    override suspend fun setCurrentColor(color: NamedColor): Unit = tasksFactory.async {
+
+        threadUtils.sleep(1000)
+        if (currentColor != color) {
+            currentColor = color
+            listeners.forEach {
+                it(color)
+            }
+        }
+    }.suspend()
 
     override fun addListener(listener: ColorListener) {
 
@@ -35,23 +52,6 @@ class InMemoryColorsRepository(
     override fun removeListener(listener: ColorListener) {
 
         listeners -= listener
-    }
-
-    override fun getCurrentColor(): Task<NamedColor> = tasksFactory.async {
-
-        threadUtils.sleep(1000)
-        return@async currentColor
-    }
-
-    override fun setCurrentColor(color: NamedColor): Task<Unit> = tasksFactory.async {
-
-        threadUtils.sleep(1000)
-        if (currentColor != color) {
-            currentColor = color
-            listeners.forEach {
-                it(color)
-            }
-        }
     }
 
     private val listeners = mutableSetOf<ColorListener>()

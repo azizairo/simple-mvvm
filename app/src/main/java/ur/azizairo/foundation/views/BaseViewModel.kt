@@ -1,11 +1,11 @@
 package ur.azizairo.foundation.views
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
+import ur.azizairo.foundation.model.ErrorResult
 import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.Result
+import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.foundation.model.tasks.Task
 import ur.azizairo.foundation.model.tasks.TaskListener
 import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
@@ -21,9 +21,7 @@ typealias MediatorLiveResult<T> = MediatorLiveData<Result<T>>
 /**
  * Base class for all view-models.
  */
-open class BaseViewModel(
-    private val dispatcher: Dispatcher
-): ViewModel() {
+open class BaseViewModel: ViewModel() {
 
     private val tasks = mutableSetOf<Task<*>>()
 
@@ -46,20 +44,19 @@ open class BaseViewModel(
         clearTasks()
     }
 
-    fun <T> Task<T>.safeEnqueue(listener: TaskListener<T>? = null) {
+    /**
+     * Launch task asynchronously and map its result to the specified
+     * [liveResult].
+     * Task is cancelled automatically if view-model is going to be destroyed.
+     */
+    fun <T> into(liveResult: MutableLiveResult<T>, block: suspend () -> T) {
 
-        tasks.add(this)
-        this.enqueue(dispatcher) {
-            tasks.remove(this)
-            listener?.invoke(it)
-        }
-    }
-
-    fun <T> Task<T>.into(liveResult: MutableLiveResult<T>) {
-
-        liveResult.value = PendingResult()
-        this.safeEnqueue {
-            liveResult.value = it
+        viewModelScope.launch {
+            try {
+                liveResult.postValue(SuccessResult(block()))
+            } catch (exception: Exception) {
+                liveResult.postValue(ErrorResult(exception))
+            }
         }
     }
 

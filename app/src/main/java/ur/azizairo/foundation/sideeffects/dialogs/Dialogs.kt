@@ -15,5 +15,5 @@ interface Dialogs {
     /**
      * Show alert dialog to the user and wait for the user choice.
      */
-    fun show(dialogConfig: DialogConfig): Task<Boolean>
+    suspend fun show(dialogConfig: DialogConfig): Boolean
 }

@@ -1,7 +1,13 @@
 package ur.azizairo.foundation.model.tasks
 
+import kotlinx.coroutines.suspendCancellableCoroutine
+import ur.azizairo.foundation.model.ErrorResult
 import ur.azizairo.foundation.model.FinalResult
+import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.foundation.model.tasks.dispatchers.Dispatcher
+import ur.azizairo.foundation.model.tasks.dispatchers.ImmediateDispatcher
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 typealias TaskListener<T> = (FinalResult<T>) -> Unit
 
@@ -30,5 +36,18 @@ interface Task<T> {
      * Cancel this task and remove listener assigned by [enqueue]
      */
     fun cancel()
+
+    suspend fun suspend(): T = suspendCancellableCoroutine { continuation ->
+
+        enqueue(ImmediateDispatcher()) {
+            continuation.invokeOnCancellation {
+                cancel()
+            }
+            when(it) {
+                is ErrorResult -> continuation.resumeWithException(it.exception)
+                is SuccessResult -> continuation.resume(it.data)
+            }
+        }
+    }
 
 }

@@ -11,7 +11,7 @@ class DialogsSideEffectMediator: SideEffectMediator<DialogsSideEffectImpl>(), Di
 
     var retainedState = RetainedState()
 
-    override fun show(dialogConfig: DialogConfig): Task<Boolean> = CallbackTask.create { emitter ->
+    override suspend fun show(dialogConfig: DialogConfig): Boolean = CallbackTask.create<Boolean> { emitter ->
 
         if (retainedState.record != null) {
             // for now allowing only 1 active dialog at a time
@@ -35,7 +35,7 @@ class DialogsSideEffectMediator: SideEffectMediator<DialogsSideEffectImpl>(), Di
         }
 
         retainedState.record = record
-    }
+    }.suspend()
 
     class DialogRecord(
             val emitter: Emitter<Boolean>,
