@@ -5,7 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.databinding.FragmentChangeColorBinding
 import ur.azizairo.foundation.views.HasScreenTitle
@@ -54,23 +59,27 @@ class ChangeColorFragment: BaseFragment(), HasScreenTitle {
         binding.saveButton.setOnClickListener { viewModel.onSavePressed() }
         binding.cancelButton.setOnClickListener { viewModel.onCancelPressed() }
 
-        viewModel.viewState.observe(viewLifecycleOwner) { result ->
-            renderSimpleResult(binding.root, result) { viewState ->
-                adapter.items = viewState.colorsList
-                binding.saveButton.visibility = if (viewState.showSaveButton) {
-                    View.VISIBLE
-                } else {
-                    View.INVISIBLE
-                }
-                binding.cancelButton.visibility = if (viewState.showCancelButton) {
-                    View.VISIBLE
-                } else {
-                    View.INVISIBLE
-                }
-                binding.saveProgressBar.visibility = if (viewState.showSaveProgressBar) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewState.collect { result ->
+                    renderSimpleResult(binding.root, result) { viewState ->
+                        adapter.items = viewState.colorsList
+                        binding.saveButton.visibility = if (viewState.showSaveButton) {
+                            View.VISIBLE
+                        } else {
+                            View.INVISIBLE
+                        }
+                        binding.cancelButton.visibility = if (viewState.showCancelButton) {
+                            View.VISIBLE
+                        } else {
+                            View.INVISIBLE
+                        }
+                        binding.saveProgressBar.visibility = if (viewState.showSaveProgressBar) {
+                            View.VISIBLE
+                        } else {
+                            View.GONE
+                        }
+                    }
                 }
             }
         }

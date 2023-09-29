@@ -2,8 +2,10 @@ package ur.azizairo.simplemvvm.views.changecolor
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ur.azizairo.foundation.model.PendingResult
+import ur.azizairo.foundation.model.Result
 import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.simplemvvm.R
 import ur.azizairo.simplemvvm.model.colors.ColorsRepository
@@ -14,7 +16,6 @@ import ur.azizairo.foundation.sideeffects.toasts.Toasts
 import ur.azizairo.foundation.views.BaseViewModel
 import ur.azizairo.foundation.views.LiveResult
 import ur.azizairo.foundation.views.MediatorLiveResult
-import ur.azizairo.foundation.views.MutableLiveResult
 import ur.azizairo.simplemvvm.views.changecolor.ChangeColorFragment.Screen
 import kotlin.Exception
 
@@ -28,34 +29,39 @@ class ChangeColorViewModel(
 ): BaseViewModel(), ColorsAdapter.Listener {
 
     // input sources
-    private val _availableColors = MutableLiveResult<List<NamedColor>>(PendingResult())
-    private val _currentColorId = savedStateHandle.getLiveData(
+    private val _availableColors = MutableStateFlow<Result<List<NamedColor>>>(PendingResult())
+    private val _currentColorId = savedStateHandle.getStateFlow(
         "currentColorId", screen.currentColorId
     )
-    private val _saveInProgress = MutableLiveData(false)
+    private val _saveInProgress = MutableStateFlow(false)
 
     // main destination (contains merged values from _availableColors & _currentColorId)
-    private val _viewState = MediatorLiveResult<ViewState>()
-    val viewState: LiveResult<ViewState> = _viewState
+    val viewState: Flow<Result<ViewState>> = combine(
+        _availableColors,
+        _currentColorId,
+        _saveInProgress,
+        ::mergeSources
+    )
 
     // side destination, also the same result can be achieved by using Transformations.map() function
-    val screenTitle: LiveData<String> = Transformations.map(viewState) { result ->
-        if (result is SuccessResult) {
-            val currentColor = result.data.colorsList.first { it.selected }
-            resources.getString(R.string.change_color_screen_title, currentColor.namedColor.name)
-        } else {
-            resources.getString(R.string.change_color_screen_title_simple)
+    // example of converting Flow into LiveData
+    // - incoming flow is Flow<Result<ViewState>>
+    // - Flow<Result<ViewState>> is mapped to Flow<String> by using .map() operator
+    // - then Flow<String> is converted to LiveData<String> by using .asLiveData()
+    val screenTitle: LiveData<String> = viewState
+        .map { result ->
+            return@map if (result is SuccessResult) {
+                val currentColor = result.data.colorsList.first { it.selected }
+                resources.getString(R.string.change_color_screen_title, currentColor.namedColor.name)
+            } else {
+                resources.getString(R.string.change_color_screen_title_simple)
+            }
         }
-    }
+        .asLiveData()
 
     init {
 
         load()
-
-        //initializing MediatorLiveData
-        _viewState.addSource(_availableColors) { mergeSources() }
-        _viewState.addSource(_currentColorId) { mergeSources() }
-        _viewState.addSource(_saveInProgress) { mergeSources() }
     }
 
 
@@ -68,13 +74,12 @@ class ChangeColorViewModel(
     fun onSavePressed() = viewModelScope.launch {
 
         try {
-            _saveInProgress.postValue(true)
+            _saveInProgress.value = true
 
             val currentColorId =
                 _currentColorId.value ?: throw IllegalArgumentException("Color ID should not be null")
             val currentColor = colorsRepository.getById(currentColorId)
-            colorsRepository.setCurrentColor(currentColor)
-
+            colorsRepository.setCurrentColor(currentColor).collect()
             navigator.goBack(currentColor)
         } catch (exception: Exception) {
             if(exception !is CancellationException) {
@@ -96,19 +101,22 @@ class ChangeColorViewModel(
     }
 
     /**
-     * [MediatorLiveData] can listen other LiveData instances (even more than 1)
-     * and combine their values.
-     * Here we listen the list of available colors ([_availableColors] live-data) + current color id
-     * ([_currentColorId] live-data), then we use both of these values in order to create a list of
-     * [NamedColorListItem], it is a list to be displayed in RecyclerView.
+     * Transformation pure method for combining data from several input flows:
+     * - the result of fetching colors list (Result<List<NamedColor>>)
+     * - current selected color in RecyclerView (Long)
+     * - flag whether saving operation is in progress or not (Boolean)
+     * All values above are merged into one [ViewState] instance:
+     * ```
+     * Flow<Result<List<NamedColor>>> ---+
+     * Flow<Long> -----------------------|--> Flow<Result<ViewState>>
+     * Flow<Boolean> --------------------+
+     * ```
      */
-    private fun mergeSources() {
+    private fun mergeSources(
+        colors: Result<List<NamedColor>>, currentColorId: Long, saveInProgress: Boolean
+    ): Result<ViewState> {
 
-        val colors = _availableColors.value ?: return
-        val currentColorId = _currentColorId.value ?: return
-        val saveInProgress = _saveInProgress.value ?: return
-
-        _viewState.value = colors.map { colorsList ->
+        return colors.map { colorsList ->
             ViewState(
                 colorsList = colorsList.map {
                     NamedColorListItem(it, currentColorId == it.id)

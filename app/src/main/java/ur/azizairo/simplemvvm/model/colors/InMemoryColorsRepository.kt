@@ -1,7 +1,10 @@
 package ur.azizairo.simplemvvm.model.colors
 
 import android.graphics.Color
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import ur.azizairo.foundation.model.coroutines.IoDispatcher
 
@@ -13,6 +16,8 @@ class InMemoryColorsRepository(
 ): ColorsRepository {
 
     private var currentColor: NamedColor = AVAILABLE_COLORS[0]
+
+    private val listeners = mutableSetOf<ColorListener>()
 
     override suspend fun getAvailableColors(): List<NamedColor> = withContext(ioDispatcher.value) {
 
@@ -32,28 +37,34 @@ class InMemoryColorsRepository(
         return@withContext currentColor
     }
 
-    override suspend fun setCurrentColor(color: NamedColor) = withContext(ioDispatcher.value) {
+    override fun setCurrentColor(color: NamedColor): Flow<Int> = flow {
 
-        delay(1000)
         if (currentColor != color) {
+            var progress = 0
+            while (progress < 100) {
+                progress += 2
+                delay(30)
+                emit(progress)
+            }
             currentColor = color
             listeners.forEach {
                 it(color)
             }
+        } else {
+            emit(100)
         }
-    }
+    }.flowOn(ioDispatcher.value)
 
-    override fun addListener(listener: ColorListener) {
+    override fun listenCurrentColor(): Flow<NamedColor> = callbackFlow {
+        val listener: ColorListener = {
+            trySend(it)
+        }
+        listeners.add(listener)
 
-        listeners += listener
-    }
-
-    override fun removeListener(listener: ColorListener) {
-
-        listeners -= listener
-    }
-
-    private val listeners = mutableSetOf<ColorListener>()
+        awaitClose {
+            listeners.remove(listener)
+        }
+    }.buffer(Channel.CONFLATED)
 
     companion object {
 

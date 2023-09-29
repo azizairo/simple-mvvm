@@ -1,8 +1,8 @@
 package ur.azizairo.simplemvvm.views.currentcolor
 
 import android.Manifest
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import ur.azizairo.foundation.model.PendingResult
 import ur.azizairo.foundation.model.SuccessResult
 import ur.azizairo.foundation.model.takeSuccess
@@ -36,21 +36,19 @@ class CurrentColorViewModel(
     private val _currentColor = MutableLiveResult<NamedColor>(PendingResult())
     val currentColor: LiveResult<NamedColor> = _currentColor
 
-    private val colorListener: ColorListener = {
-        _currentColor.postValue(SuccessResult(it))
-    }
-
     // --- example of listening results via model layer
 
     init {
-        colorsRepository.addListener(colorListener)
+
+        viewModelScope.launch {
+            // as listenCurrentColor() returns infinite flow,
+            // collecting is cancelled when view-model is going to be destroyed
+            // (because collect() is executed inside viewModelScope)
+            colorsRepository.listenCurrentColor().collect {
+                _currentColor.postValue(SuccessResult(it))
+            }
+        }
         load()
-    }
-
-    override fun onCleared() {
-
-        super.onCleared()
-        colorsRepository.removeListener(colorListener)
     }
 
     // --- example of listening results directly from the screen

@@ -4,6 +4,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.view.children
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ur.azizairo.foundation.model.Result
 import ur.azizairo.foundation.views.BaseFragment
 import ur.azizairo.simplemvvm.R
@@ -33,6 +39,23 @@ fun <T> BaseFragment.renderSimpleResult(
         }
     )
 
+}
+
+/**
+ * Collect items from the specified [Flow] only when fragment is at least in STARTED state.
+ */
+fun <T> BaseFragment.collectFlow(flow: Flow<T>, onCollect: (T) -> Unit) {
+
+    viewLifecycleOwner.lifecycleScope.launch {
+        // this coroutine is cancelled in onDestroyView
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            // this coroutine is launched every time when onStart is called;
+            // collecting is cancelled in onStop
+            flow.collect {
+                onCollect(it)
+            }
+        }
+    }
 }
 
 fun BaseFragment.onTryAgain(root: View, onTryAgain: () -> Unit) {
