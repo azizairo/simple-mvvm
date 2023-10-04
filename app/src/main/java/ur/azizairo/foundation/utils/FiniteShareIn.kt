@@ -13,6 +13,10 @@ class ErrorElement<T>(
 
 class CompletedElement<T>: Element<T>()
 
+/**
+ * Transform this Flow into Hot Shared Flow (like by using [shareIn] operator), but which is finite and
+ * which also propagates exceptions from the source flow.
+ */
 fun <T> Flow<T>.finiteShareIn(
     coroutineScope: CoroutineScope
 ): Flow<T> {
