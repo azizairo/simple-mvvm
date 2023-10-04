@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/colors_recycler_view"
@@ -37,16 +39,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/save_button"/>
 
-    <include layout="@layout/part_result" />
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/save_progress_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="saving_hint_text_view,saving_percentage_text_view,save_progress_bar"/>
+
+    <TextView
+        android:id="@+id/saving_hint_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/please_wait"
+        app:layout_constraintStart_toStartOf="@id/save_progress_bar"
+        app:layout_constraintBottom_toTopOf="@id/save_progress_bar" />
+
+    <TextView
+        android:id="@+id/saving_percentage_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        tools:text="100%"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/save_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@id/save_progress_bar"/>
 
     <ProgressBar
         android:id="@+id/save_progress_bar"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:max="100"
+        tools:progress="33"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/saving_percentage_text_view"
         app:layout_constraintTop_toTopOf="@id/save_button"
-        app:layout_constraintBottom_toBottomOf="@id/save_button"/>
+        app:layout_constraintBottom_toBottomOf="@id/save_button" />
+
+    <include layout="@layout/part_result" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

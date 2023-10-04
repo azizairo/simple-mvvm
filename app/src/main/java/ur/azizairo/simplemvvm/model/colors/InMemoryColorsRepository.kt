@@ -27,7 +27,7 @@ class InMemoryColorsRepository(
 
     override suspend fun getById(id: Long): NamedColor = withContext(ioDispatcher.value) {
 
-        delay(1000)
+        delay(100)
         return@withContext AVAILABLE_COLORS.first { it.id == id }
     }
 
